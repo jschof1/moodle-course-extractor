@@ -1,0 +1,25 @@
+{
+  "name": "moodle-course-extractor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "xml-to-html.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jschof1/moodle-course-extractor.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jschof1/moodle-course-extractor/issues"
+  },
+  "homepage": "https://github.com/jschof1/moodle-course-extractor#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "util": "^0.12.5",
+    "xml2js": "^0.6.0"
+  }
+}

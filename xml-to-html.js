@@ -70,7 +70,7 @@ async function processDirectory(dir) {
     }
 }
 
-processDirectory('/Users/jackschofield/Downloads/moodle-odi-scarper/course/activities')
+processDirectory('moodle-course-extractor/course/activities')
     .then(() => {
         // Write all contents to file.html
         return writeFile('file.html', contents.join('\n'));
