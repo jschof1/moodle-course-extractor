@@ -16,7 +16,7 @@ Before running this application, you will need to install the following:
 After you have installed Node.js and npm, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/YourGithubUsername/moodle-course-extractor.git
+git clone https://github.com/jschof1/moodle-course-extractor.git
 cd moodle-course-extractor
 ```
 
@@ -56,4 +56,4 @@ This project is licensed under the MIT License. For more details, see the [LICEN
 
 ## Contact
 
-If you have any questions or issues, please submit an issue in this repository. You can also contact the repository owner directly at YourGithubUsername@example.com.
+If you have any questions or issues, please submit an issue in this repository.
