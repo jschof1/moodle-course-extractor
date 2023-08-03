@@ -1,6 +1,6 @@
 # Moodle Document Extractor
 
-This is a web-based application to extract the contents of Moodle pages and SCORM activities from Moodle backup files (.mbz) and convert them into a .docx document.
+This is a web-based application to extract the text from Moodle pages and SCORM activities from Moodle backup files (.mbz) and convert them into a .docx document.
 
 The application uses a React-based frontend for the user interface and a Node.js backend for file handling and conversion.
 
@@ -16,12 +16,12 @@ The application uses a React-based frontend for the user interface and a Node.js
 1. Clone this repository:
 
    ```
-   git clone https://github.com/jschof1/moodle-document-extractor.git
+   git clone https://github.com/jschof1/moodle-course-extractor.git
    ```
 2. Navigate into the project directory:
 
    ```
-   cd moodle-document-extractor
+   cd moodle-course-extractor
    ```
 3. Install the dependencies for the server:
 
@@ -109,4 +109,4 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 - [jschof1](https://github.com/jschof1)
 
-See also the list of [contributors](https://github.com/jschof1/moodle-document-extractor/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/jschof1/moodle-course-extractor/contributors) who participated in this project.
