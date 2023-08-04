@@ -8,8 +8,81 @@ const path = require('path');
 const fs = require('fs');
 const xmlToHtml = require('./xml-to-html');
 const port = 1001;
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+require('dotenv').config();
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
-app.use(cors());
+app.post('/clear', (req, res) => {
+  const directories = ['output', 'uploads'];
+  
+  directories.forEach(directory => {
+    fs.readdir(path.join(__dirname, directory), (err, files) => {
+      if (err) throw err;
+
+      for (const file of files) {
+        fs.unlink(path.join(__dirname, directory, file), err => {
+          if (err) throw err;
+        });
+      }
+    });
+  });
+  
+  res.send('Directories cleared successfully');
+});
+
+
+app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+}));
+
+
+app.use(session({
+  secret: 'my-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Make sure this is false if you're not using HTTPS
+    maxAge: 24 * 60 * 60 * 1000 // 1 day
+  }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new GoogleStrategy({
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: 'http://localhost:1001/auth/google/callback'
+  },
+  function(accessToken, refreshToken, profile, done) {
+    console.log(profile); // check the profile object here
+    return done(null, profile);
+  }));
+
+  passport.serializeUser(function(user, cb) {
+    cb(null, user.id);
+  });
+
+  passport.deserializeUser(function(id, cb) {
+    cb(null, {user_id: id});
+  });
+
+  app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Google authentication callback route
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login', session: true }),
+  function(req, res) {
+    console.log('req.user', req.user);
+    res.redirect('http://localhost:5173/');
+});
+
 
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
@@ -53,7 +126,16 @@ app.get('/preview', function(req, res) {
 
 app.get('/download', function(req, res){
   const file = path.join(__dirname, '..', 'output', 'output.docx');
-  res.download(file); // Set disposition and send it.
+  res.download(file);
+});
+
+app.get('/user', (req, res) => {
+  if (req.user) {
+    console.log('req.user', req.user);
+    res.json({ user: req.user });
+  } else {
+    res.json({ user: null });
+  }
 });
 
 app.listen(port, () => {

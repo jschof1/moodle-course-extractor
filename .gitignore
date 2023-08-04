@@ -7,3 +7,5 @@ server/uploads
 server/uploads/activities/
 output/output.docx
 output/output.html
+.env
+```
