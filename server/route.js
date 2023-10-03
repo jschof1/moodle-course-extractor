@@ -3,7 +3,9 @@ const cors = require('cors');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const app = express();
+const archiver = require('archiver');
 const unzipper = require('unzipper'); 
+const tar = require('tar');
 const path = require('path');
 const fs = require('fs');
 const xmlToHtml = require('./xml-to-html');
@@ -92,31 +94,31 @@ app.get('/auth/google/callback',
     res.redirect('http://localhost:5173/');
 });
 
-
-app.post('/upload', upload.single('file'), async (req, res) => {
+app.post('/process-file', upload.single('file'), async (req, res) => {
   try {
-    const filePath = req.file.path;
+    let filePath = req.file.path;
     const extractPath = path.join(__dirname, 'uploads');
 
-    const directory = await unzipper.Open.file(filePath);
-    for(let entry of directory.files) {
-      if (entry.path.includes('activities')) {
-        const outputPath = path.join(extractPath, entry.path);
-        if (entry.type === 'Directory') {
-          fs.mkdirSync(outputPath, { recursive: true });
-        } else {
-          entry.stream().pipe(fs.createWriteStream(outputPath));
-        }
-      }
+    // 1. Rename file if it has .mbz extension to .tar.gz for clarity
+    if (path.extname(filePath) === '.mbz') {
+      const newPath = filePath.replace('.mbz', '.tar.gz');
+      fs.renameSync(filePath, newPath);
+      filePath = newPath; // Update the filePath to point to the renamed file
     }
-    console.log(`Extracted to ${extractPath}`);
+
+    // 2. Extract .tar.gz
+    await tar.x({
+      file: filePath,
+      cwd: extractPath
+    });
+
+    console.log(`Processed and stored at ${extractPath}`);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
   }
 });
-
 app.post('/convert', async (req, res) => {
   try {
     const activitiesPath = path.join(__dirname, 'uploads', 'activities');

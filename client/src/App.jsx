@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { List, ListItem, ListItemIcon, ListItemText, Button, Box, Paper, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, Icon } from "@mui/material";
+import {Grid, List, ListItem, ListItemIcon, ListItemText, Button, Box, Paper, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, Icon } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CheckCircle from '@mui/icons-material/CheckCircle';
+import logo from './assets/odi-logo.png';
+import CssBaseline from '@mui/material/CssBaseline';
 
 const theme = createTheme({
   typography: {
@@ -54,36 +56,41 @@ function App() {
 
   const handleFilesUpload = (event) => {
     setFiles(event.target.files);
-
+  
     const formData = new FormData();
     for (let i = 0; i < event.target.files.length; i++) {
       formData.append("file", event.target.files[i]);
     }
+  
     setFileLoading(true);
-    fetch("http://localhost:1001/upload", {
+  
+    // First, call the /process-file endpoint
+    fetch("http://localhost:1001/process-file", {
       method: "POST",
       body: formData,
     })
       .then((response) => {
         if (response.ok) {
-          console.log("Files uploaded successfully");
+          console.log("Files processed successfully");
+  
+          // Then convert the files
           return fetch("http://localhost:1001/convert", {
             method: "POST",
           });
         } else {
-          throw new Error("Upload failed");
+          throw new Error("Processing failed");
         }
       })
       .then((response) => {
         if (response.ok) {
           console.log("Files converted successfully");
+  
           // Fetch the preview after successful conversion
           return fetch("http://localhost:1001/preview")
             .then((res) => res.text())
             .then((text) => {
               setPreview(text);
-            })
-            .catch((error) => console.error(error));
+            });
         } else {
           throw new Error("Conversion failed");
         }
@@ -111,12 +118,23 @@ function App() {
   const handleClear = () => {
     setPreview(null); // Clear the preview immediately
     event.target.value = null;
-
     // Reset the file input value
     const fileInput = document.getElementById("contained-button-file");
     if (fileInput) {
       fileInput.value = null;
     }
+
+    fetch('http://localhost:1001/clear', {
+      method: 'POST',
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Directories cleared successfully');
+        } else {
+          throw new Error('Clearing directories failed');
+        }
+      })
+      .catch(error => console.error(error));
   };
   if (!user) {
     return (
@@ -136,17 +154,23 @@ function App() {
     );
   } else {
     return (
+      
       <ThemeProvider theme={theme}>
-        {/* create a small button with a model which explains how it works */}
+        {/* wrap in nav bar with blue background */}
+        <Box sx={{ flexGrow: 1,  borderRadius: 0, }}>
+        <Paper sx={{ p: 4, mb: 1,  borderRadius: 0}} elevation={0} style={{ backgroundColor: '#0B3D91' }}>
+          
+        {/* add my odi-logo.svg to left hand corner */}
+        <img src={logo} alt="ODI Logo" style={{ position: 'absolute', top: '10px', left: '10px', height: '30px', margin: '8px' }} />
         <Button
         size="small"
-        color="primary"
         onClick={handleClickOpen}
-        style={{ position: 'absolute', top: '10px', right: '10px' }}
+        style={{ position: 'absolute', top: '10px', right: '10px', padding: '10px', color: 'white'}}
       >
-        How it works?
+        Instructions
       </Button>
-
+</Paper>
+</Box>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -172,14 +196,7 @@ function App() {
     <ListItemIcon>
         <CheckCircle />
     </ListItemIcon>
-    <ListItemText primary="Prepare the Backup for Extraction" secondary="Once you have the backup file, change its file extension from `.mbz` to `.zip`. With the file extension modified, proceed to unzip this file to access its contents." />
-  </ListItem>
-
-  <ListItem>
-    <ListItemIcon>
-        <CheckCircle />
-    </ListItemIcon>
-    <ListItemText primary="Repackage the Relevant Content" secondary="Inside the unzipped folder, rezip its entire contents" />
+    <ListItemText primary="Prepare the Backup for Extraction" secondary="Once you have the backup file downloaded you may upload it to the Moodle Course Extractor. Click the 'Upload' button and select the backup file you downloaded from Moodle." />
   </ListItem>
 
   <ListItem>
@@ -189,6 +206,9 @@ function App() {
     <ListItemText primary="To Extract a Different Course" secondary="Click the 'Clear Files' button." />
   </ListItem>
 </List>
+<Typography variant="body1" gutterBottom>
+  <b>Important Note:</b> The Moodle Course Extractor can only extract 'pages' and 'SCORM' activity text right now. If you have any questions or feedback, <a href="mailto:training@theodi.org">please contact us</a>.
+</Typography>
           </DialogContentText>
         </DialogContent>
         <Button onClick={handleClose} color="primary">
@@ -196,15 +216,17 @@ function App() {
         </Button>
       </Dialog>
       <Typography variant="h4" align="center" gutterBottom fontWeight={600} pt={3}>
-        Extract Moodle pages
+        Moodle Course Extractor
       </Typography>
-      <Paper>
+      <Paper elevation={0}>
         <Box
+        // remove box shadow
           display="flex"
           justifyContent="center"
           alignItems="center"
           minHeight="10vh"
           flexDirection="row"
+          padding={0}
           gap={2}
         >
           <label htmlFor="contained-button-file">
@@ -233,9 +255,12 @@ function App() {
           Loading...
         </Typography>
       ) : preview ? (
-        <Paper elevation={3} style={{ overflow: 'auto', height: '100vh', marginTop: '20px', padding: '20px' }}>
+        // center paper
+        <Grid container justifyContent="center">
+        <Paper elevation={3} style={{ overflow: 'none', height: '100vh', width: '60em', marginTop: '40px' }}>
         <iframe srcDoc={preview} title="Preview" style={{ width: '100%', height: '90vh', border: 'none' }} />
     </Paper>
+    </Grid>
       ) : null}
       </ThemeProvider>
     )
