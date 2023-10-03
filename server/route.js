@@ -14,25 +14,34 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 require('dotenv').config();
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const rimraf = require('rimraf').sync;
+
+const outputDirectory = path.join('..', 'output');
 
 app.post('/clear', (req, res) => {
-  const directories = ['output', 'uploads'];
-  
+  const directories = [outputDirectory, 'uploads'];
+
   directories.forEach(directory => {
     fs.readdir(path.join(__dirname, directory), (err, files) => {
-      if (err) throw err;
+      if (err) console.error(err);
 
       for (const file of files) {
-        fs.unlink(path.join(__dirname, directory, file), err => {
-          if (err) throw err;
-        });
+        try {
+          rimraf(path.join(__dirname, directory, file));
+        } catch (err) {
+          console.error(err);
+        }
       }
     });
   });
-  
+
+  // Recreate the uploads directory
+  fs.mkdir(path.join(__dirname, 'uploads'), { recursive: true }, (err) => {
+    if (err) throw err;
+  });
+
   res.send('Directories cleared successfully');
 });
-
 
 app.use(express.json());
 app.use(cors({
@@ -118,12 +127,15 @@ app.post('/convert', async (req, res) => {
     res.status(500).send(err.message);
   }
 });
-
 app.get('/preview', function(req, res) {
   const file = path.join(__dirname, '..', 'output', 'output.html');
-  res.sendFile(file);
-});
 
+  if(fs.existsSync(file)) {
+    res.sendFile(file);
+  } else {
+    res.status(404).send("File not found");
+  }
+});
 app.get('/download', function(req, res){
   const file = path.join(__dirname, '..', 'output', 'output.docx');
   res.download(file);

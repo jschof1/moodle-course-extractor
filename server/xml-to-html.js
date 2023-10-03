@@ -135,7 +135,23 @@ module.exports = {
       await this.processDirectory(activitiesPath);
       const htmlContent = contents.join("\n");
       const sanitizedHtmlContent = sanitizeContent(htmlContent);
-      await fs.promises.writeFile(path.join(__dirname, "..", "output", "output.html"), sanitizedHtmlContent);
+      const withWaterCss = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Preview</title>
+        <link href="https://cdn.jsdelivr.net/npm/water.css/out/water.css" rel="stylesheet">
+      </head>
+      <body>
+        ${sanitizedHtmlContent}
+      </body>
+      </html>
+    `;
+
+    await fs.promises.writeFile(path.join(__dirname, "..", "output", "output.html"), withWaterCss);
+    await convertHtmlToDocx(withWaterCss);
       await convertHtmlToDocx(sanitizedHtmlContent);
     } catch (err) {
       console.error("Error converting files:", err);

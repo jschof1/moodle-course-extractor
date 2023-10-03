@@ -78,13 +78,13 @@ function App() {
     // When the Download button is pressed, simply redirect to the download endpoint
     window.location.href = 'http://localhost:1001/download';
   };
-  useEffect(() => {
-    // Fetch preview after file conversion
-    fetch('http://localhost:1001/preview')
-      .then(res => res.text())
-      .then(text => setPreview(text))
-      .catch(error => console.error(error));
-  }, [files]);
+  // useEffect(() => {
+  //   // Fetch preview after file conversion
+  //   fetch('http://localhost:1001/preview')
+  //     .then(res => res.text())
+  //     .then(text => setPreview(text))
+  //     .catch(error => console.error(error));
+  // }, [files]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -145,11 +145,11 @@ function App() {
 </Button>
         </Box>
       </Paper>
-      {/* {preview && (
+      {preview && (
         <div style={{ overflow: 'auto', height: '100vh', width: '100%', border: '1px solid #ccc', marginTop: '20px' }}>
           <iframe srcDoc={preview} title="Preview" style={{ width: '100%', height: '100%' }} />
         </div>
-      )} */}
+      )}
     </>
   );
       }

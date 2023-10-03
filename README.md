@@ -32,7 +32,7 @@ The application uses a React-based frontend for the user interface and a Node.js
 4. Install the dependencies for the client:
 
    ```
-   cd ../client
+   cd client
    npm install
    ```
 
@@ -41,7 +41,7 @@ The application uses a React-based frontend for the user interface and a Node.js
 1. Start the backend server:
 
    ```
-   cd ../server
+   cd server
    npm start
    ```
 
@@ -49,7 +49,7 @@ The application uses a React-based frontend for the user interface and a Node.js
 2. In a new terminal, start the frontend client:
 
    ```
-   cd ../client
+   cd client
    npm run dev
    ```
 
