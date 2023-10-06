@@ -62,6 +62,37 @@ function downgradeHeadings(content) {
     return $.html();
 }
 
+function replaceVimeoIframes(content) {
+  const $ = cheerio.load(content);
+
+  $('iframe').each(function() {
+      const src = $(this).attr('src');
+      if (src && src.includes('player.vimeo.com/video')) {
+          const videoLink = `<br><a href="${src}">video link</a>`;
+          $(this).replaceWith(videoLink);
+      }
+  });
+
+  return $.html();
+}
+
+function removeNestedDivs(content) {
+  const $ = cheerio.load(content);
+
+  function denest($element) {
+      while ($element.children().length === 1 && $element.children().first().is('div')) {
+          let $child = $element.children().first();
+          $element.replaceWith($child);
+          denest($child); // recursively check for more nested divs
+      }
+  }
+
+  $("div").each(function () {
+      denest($(this));
+  });
+
+  return $.html();
+}
 let contents = [];
 
 async function convertXmlToHtml(xml) {
@@ -75,26 +106,29 @@ async function convertXmlToHtml(xml) {
     if (json.activity && json.activity.page && json.activity.page[0].content) {
       content = json.activity.page[0].content[0];
       type = "Page Activity";
-      html = '<h1>' + json.activity.page[0].name + '</h1>';
+      html = `<h1>${json.activity.page[0].name}</h1>`;
     } else if (
       json.activity &&
       json.activity.scorm &&
       json.activity.scorm[0].intro
     ) {
       content = json.activity.scorm[0].intro[0];
-      type = "Scorm Activity";
+      type = "Scorm/Adapt Activity";
+      html = `<hr><span><h1>${json.activity.scorm[0].name}</h1><p> (${type})</p></span>`;
     }
   
     // Remove the div class="banner-img"
     const $ = cheerio.load(content);
     $(".banner-img").remove();
     content = $.html();
+    content = replaceVimeoIframes(content);
   
     html += `${content}`;
   
     // Downgrade headings
     html = downgradeHeadings(html);
     html = removeDuplicateHeadings(html);
+    html = removeNestedDivs(html);
   
     return html;
   }
@@ -114,6 +148,8 @@ module.exports = {
       const numB = Number(b.name.split("_")[1]);
       return numA - numB;
     });
+
+    console.log("pageAndScormDirs", pageAndScormDirs)
 
     for (const dirent of pageAndScormDirs) {
       const fullPath = path.join(dir, dirent.name);
