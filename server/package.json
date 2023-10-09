@@ -1,10 +1,10 @@
 {
-  "name": "moodle-course-extractor",
+  "name": "moodle-course-extractor-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "xml-to-html.js",
+  "main": "route.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node route.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,6 @@
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "env": "0.0.2",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "fs": "0.0.1-security",
