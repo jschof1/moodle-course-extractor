@@ -1,5 +1,5 @@
 {
-  "name": "moodle-course-extractor",
+  "name": "client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -30,9 +30,5 @@
     "eslint-plugin-react-refresh": "^0.4.3",
     "vite": "^4.4.5"
   },
-  "proxy": "http://localhost:1001",
-  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
-  "main": "vite.config.js",
-  "author": "",
-  "license": "ISC"
+  "proxy": "http://localhost:1001"
 }
