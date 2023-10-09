@@ -1,59 +1,112 @@
-# Moodle Course Extractor
+# Moodle Document Extractor
 
-This GitHub repository contains the Moodle Course Extractor application which allows you to extract course content from Moodle. The application provides an easy-to-use method of extracting course content and reformatting it into both an HTML file and a Google Docs file.
+This is a web-based application to extract the text from Moodle pages and SCORM activities from Moodle backup files (.mbz) and convert them into a .docx document.
 
-Please note, this application does not currently support the extraction of images due to the way Moodle handles file backups.
+The application uses a React-based frontend for the user interface and a Node.js backend for file handling and conversion.
 
-## Prerequisites
+## Getting Started
 
-Before running this application, you will need to install the following:
+### Prerequisites
 
-- [Node.js](https://nodejs.org/en/download/)
-- [npm](https://www.npmjs.com/get-npm) (comes bundled with Node.js)
+- Node.js
+- npm
 
-## Installation
+### Installing
 
-After you have installed Node.js and npm, clone the repository to your local machine:
+1. Clone this repository:
 
-```bash
-git clone https://github.com/jschof1/moodle-course-extractor.git
-cd moodle-course-extractor
-```
+   ```
+   git clone https://github.com/jschof1/moodle-course-extractor.git
+   ```
+2. Navigate into the project directory:
 
-Next, install the project dependencies:
+   ```
+   cd moodle-course-extractor
+   ```
+3. Install the dependencies for the server:
 
-```bash
-npm install
-```
+   ```
+   cd server
+   npm install
+   ```
+4. Install the dependencies for the client:
+
+   ```
+   cd client
+   npm install
+   ```
+
+### Running the Application
+
+1. Start the backend server:
+
+   ```
+   cd server
+   npm start
+   ```
+
+   The backend server will start on `http://localhost:1001`.
+2. In a new terminal, start the frontend client:
+
+   ```
+   cd client
+   npm run dev
+   ```
+
+   The frontend client will start on `http://localhost:5174`.
 
 ## Usage
 
-To use the Moodle Course Extractor application, follow these steps:
+1. On the homepage, click the "Upload" button and select the Moodle backup file (.mbz) that you wish to convert. Note: If your Moodle backup file has a .mbz extension, you will first need to change the file extension to .zip, then rezip the contents of the archive.
+2. Click the "Download" button. The application will upload the file, extract the relevant contents, convert them to a .docx format, and initiate a download of the resulting document.
 
-1. **Backup your Moodle Course**: In Moodle, navigate to the course you want to extract and create a backup. Download the backup to your local machine.
-2. **Rename and Unzip the Backup**: Change the file extension of the downloaded backup from `.mbz` to `.zip`. Once the file extension has been changed, unzip the file.
-3. **Locate the Activities Folder**: Inside the unzipped folder, look for the "activities" folder.
-4. **Move the Activities Folder**: Drag the "activities" folder into the Moodle Course Extractor folder.
-5. **Run the Application**: In your terminal, navigate to the Moodle Course Extractor folder and run the following command:
+## File Structure
 
-```bash
-node xml-to-html
+```
+.
+├── client
+│   ├── README.md
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   └── vite.svg
+│   ├── src
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── assets
+│   │   │   └── react.svg
+│   │   ├── index.css
+│   │   └── main.jsx
+│   └── vite.config.js
+├── output
+│   └── output.docx
+└── server
+    ├── README.md
+    ├── package-lock.json
+    ├── package.json
+    ├── route.js
+    └── xml-to-html.js
 ```
 
-After running the command, the application will create two files: an HTML file containing the raw course content and a `.docx` file that can be imported directly into Google Drive.
+- The `client` directory contains the frontend of the application, created with React. The entry point of the application is `main.jsx` and the main application component is in `App.jsx`.
+- The `server` directory contains the backend of the application, implemented with Node.js. The main server file is `route.js`, which handles the file upload, extraction, and conversion processes.
+- The `output` directory is where the converted .docx file will be saved.
 
-## Limitations
+## Built With
 
-Please note that the current version of this application does not support the extraction of images. This is due to how Moodle handles file backups, which prevents images from being included in the backup.
+- React
+- Node.js
+- Express
+- Multer
+- Unzipper
 
 ## Contributing
 
-Contributions to the Moodle Course Extractor are welcomed. To contribute, please submit a pull request.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## License
+## Authors
 
-This project is licensed under the MIT License. For more details, see the [LICENSE](./LICENSE) file.
+- [jschof1](https://github.com/jschof1)
 
-## Contact
-
-If you have any questions or issues, please submit an issue in this repository.
+See also the list of [contributors](https://github.com/jschof1/moodle-course-extractor/contributors) who participated in this project.

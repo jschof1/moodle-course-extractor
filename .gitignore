@@ -1,2 +1,11 @@
 node_modules
+DS_Store
+*.log
 .DS_Store
+server/output.docx
+server/uploads
+server/uploads/activities/
+output/output.docx
+output/output.html
+.env
+```
