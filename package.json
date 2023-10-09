@@ -1,0 +1,33 @@
+{
+  "name": "moodle-course-extractor",
+  "version": "1.0.0",
+  "description": "This is a web-based application to extract the text from Moodle pages and SCORM activities from Moodle backup files (.mbz) and convert them into a .docx document.",
+  "main": "index.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "html-to-docx": "^1.8.0",
+    "multer": "^1.4.5-lts.1",
+    "path": "^0.12.7",
+    "util": "^0.12.5",
+    "sanitize-html": "^2.11.0",
+    "xml2js": "^0.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "start": "cd server && node route.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jschof1/moodle-course-extractor.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jschof1/moodle-course-extractor/issues"
+  },
+  "homepage": "https://github.com/jschof1/moodle-course-extractor#readme"
+}
