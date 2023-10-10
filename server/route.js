@@ -20,6 +20,7 @@ const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 const outputDirectory = path.join("..", "output");
 
 app.use(express.json());
+app.use(express.static(path.resolve(__dirname, '../client/dist')));
 app.use(
   cors({
     origin: CLIENT_URL,
