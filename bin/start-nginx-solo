@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# This will start the NGINX server
+nginx -p .heroku/nginx -c config/nginx.conf.erb

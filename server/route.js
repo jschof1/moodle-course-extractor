@@ -7,16 +7,16 @@ const tar = require("tar");
 const path = require("path");
 const fs = require("fs");
 const xmlToHtml = require("./xml-to-html");
-const port = 1001;
 const session = require("express-session");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+const rimraf = require("rimraf").sync;
 require("dotenv").config();
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const rimraf = require("rimraf").sync;
+const port = process.env.PORT || 1001;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
-
+const CLIENT_SECRET = process.env.CLIENT_SECRET
 const outputDirectory = path.join("..", "output");
 
 app.use(express.json());
@@ -31,7 +31,7 @@ app.use(
 
 app.use(
   session({
-    secret: "my-secret",
+    secret: CLIENT_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -48,7 +48,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:1001/auth/google/callback",
+      callbackURL: port+"/auth/google/callback",
     },
     function (accessToken, refreshToken, profile, done) {
       console.log(profile); // check the profile object here
@@ -76,7 +76,7 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/login", session: true }),
   function (req, res) {
     console.log("req.user", req.user);
-    res.redirect("http://localhost:5173/");
+    res.redirect(CLIENT_URL);
   }
 );
 

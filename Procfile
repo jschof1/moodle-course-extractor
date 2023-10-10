@@ -1,1 +1,1 @@
-web: npm run serve-heroku
+web: env NGINX_CONF_INCLUDE=config/nginx.conf.erb bin/start-nginx-solo
