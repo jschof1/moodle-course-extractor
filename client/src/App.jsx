@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import {
   Grid,
   List,
@@ -70,16 +71,16 @@ function App() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:1001/user", { credentials: "include" })
+    fetch("/api/user", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setUser(data.user);
-        setLoading(false); // Set loading to false after getting the response
+        setLoading(false); 
       })
       .catch((error) => {
         console.error(error);
-        setLoading(false); // Set loading to false even if there's an error
+        setLoading(false);
       });
   }, []);
 
@@ -94,16 +95,15 @@ function App() {
     setFileLoading(true);
 
     // First, call the /process-file endpoint
-    fetch("http://localhost:1001/process-file", {
+    fetch("api/process-file", {
       method: "POST",
       body: formData,
     })
       .then((response) => {
         if (response.ok) {
           console.log("Files processed successfully");
-
           // Then convert the files
-          return fetch("http://localhost:1001/convert", {
+          return fetch("api/convert", {
             method: "POST",
           });
         } else {
@@ -115,7 +115,7 @@ function App() {
           console.log("Files converted successfully");
 
           // Fetch the preview after successful conversion
-          return fetch("http://localhost:1001/preview")
+          return fetch("api/preview")
             .then((res) => res.text())
             .then((text) => {
               setPreview(text);
@@ -133,15 +133,8 @@ function App() {
   };
 
   const handleSubmit = () => {
-    window.location.href = "http://localhost:1001/download";
+    window.location.href = "api/download";
   };
-  // useEffect(() => {
-  //   // Fetch preview after file conversion
-  //   fetch('http://localhost:1001/preview')
-  //     .then(res => res.text())
-  //     .then(text => setPreview(text))
-  //     .catch(error => console.error(error));
-  // }, [files]);
 
   const handleClear = () => {
     setPreview(null); // Clear the preview immediately
@@ -152,7 +145,7 @@ function App() {
       fileInput.value = null;
     }
 
-    fetch("http://localhost:1001/clear", {
+    fetch("api/clear", {
       method: "POST",
     })
       .then((response) => {
@@ -175,7 +168,7 @@ function App() {
           top: "50%",
           transform: "translate(-50%, -50%)",
         }}
-        href="http://localhost:1001/auth/google"
+        href="/auth/google"
       >
         Sign in with Google
       </Button>

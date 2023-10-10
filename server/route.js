@@ -15,38 +15,14 @@ require("dotenv").config();
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const rimraf = require("rimraf").sync;
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 const outputDirectory = path.join("..", "output");
-
-app.post("/clear", (req, res) => {
-  const directories = [outputDirectory, "uploads"];
-
-  directories.forEach((directory) => {
-    fs.readdir(path.join(__dirname, directory), (err, files) => {
-      if (err) console.error(err);
-
-      for (const file of files) {
-        try {
-          rimraf(path.join(__dirname, directory, file));
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    });
-  });
-
-  // Recreate the uploads directory
-  fs.mkdir(path.join(__dirname, "uploads"), { recursive: true }, (err) => {
-    if (err) throw err;
-  });
-
-  res.send("Directories cleared successfully");
-});
 
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: CLIENT_URL,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   })
@@ -103,6 +79,15 @@ app.get(
   }
 );
 
+app.get("/user", (req, res) => {
+  if (req.user) {
+    console.log("req.user", req.user);
+    res.json({ user: req.user });
+  } else {
+    res.json({ user: null });
+  }
+});
+
 app.post("/process-file", upload.single("file"), async (req, res) => {
   try {
     let filePath = req.file.path;
@@ -152,14 +137,31 @@ app.get("/download", function (req, res) {
   res.download(file);
 });
 
-app.get("/user", (req, res) => {
-  if (req.user) {
-    console.log("req.user", req.user);
-    res.json({ user: req.user });
-  } else {
-    res.json({ user: null });
-  }
+app.post("/clear", (req, res) => {
+  const directories = [outputDirectory, "uploads"];
+
+  directories.forEach((directory) => {
+    fs.readdir(path.join(__dirname, directory), (err, files) => {
+      if (err) console.error(err);
+
+      for (const file of files) {
+        try {
+          rimraf(path.join(__dirname, directory, file));
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
+  });
+
+  // Recreate the uploads directory
+  fs.mkdir(path.join(__dirname, "uploads"), { recursive: true }, (err) => {
+    if (err) throw err;
+  });
+
+  res.send("Directories cleared successfully");
 });
+
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
