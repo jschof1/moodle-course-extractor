@@ -2,12 +2,12 @@
   "name": "moodle-course-extractor",
   "version": "1.0.0",
   "description": "This is a web-based application to extract the text from Moodle pages and SCORM activities from Moodle backup files (.mbz) and convert them into a .docx document.",
-  "main": "index.js",
+  "main": "route.js",
   "dependencies": {},
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "cd client && npm install && npm run build",
+    "heroku-postbuild": "cd client && npm install && npm run build && cd ../server && npm install",
     "start": "cd server && node route.js"
   },
   "repository": {
